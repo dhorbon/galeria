@@ -1,23 +1,48 @@
-import logo from './logo.svg';
 import './App.css';
+import axios from 'axios';
+import { useState } from 'react';
+
 
 function App() {
+  var [photos, setPhotos] = useState();
+  
+  var query = async (content) => {
+    await axios.get(`https://pixabay.com/api/?key=44068099-4363f9b212e2539433215b8c2&q=${content}&image_type=photo`).then((response) => {
+      var temp = []
+      response.data.hits.forEach((picture, index, array) => {
+        temp.push([picture.previewURL, picture.pageURL])
+        if(index === array.length -1){
+          setPhotos(temp);
+        }
+      })
+    })
+  } 
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <div className="header">
+        <button onClick={()=>{query("cats")}} className='button'>
+          Koty
+        </button> 
+        <button onClick={()=>{query("dogs")}} className='button'>
+          Psy
+        </button> 
+        <button onClick={()=>{query("cities")}} className='button'>
+          Miasta
+        </button> 
+        <button onClick={()=>{query("lakes")}} className='button'>
+          Jeziora
+        </button> 
+      </div>
+      <div className="main">
+        {photos && photos.map((photo) => 
+          <div className="photo">
+            <a href={photo[1]} target='blank'>
+              <img src={photo[0]}></img>
+            </a>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
